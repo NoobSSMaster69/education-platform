@@ -2,9 +2,7 @@ version: "3.8"
 
 services:
   course-service:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: tymurmustafaiev/course-service:latest  # Указан образ из Docker Hub
     container_name: course-service
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://course-db:5432/course_service_db
