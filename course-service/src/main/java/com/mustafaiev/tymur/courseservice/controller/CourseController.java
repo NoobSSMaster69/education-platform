@@ -1,7 +1,11 @@
 package com.mustafaiev.tymur.courseservice.controller;
 
+import com.mustafaiev.tymur.courseservice.DTO.CourseRequestDto;
+import com.mustafaiev.tymur.courseservice.entity.Category;
 import com.mustafaiev.tymur.courseservice.entity.Course;
+import com.mustafaiev.tymur.courseservice.entity.User;
 import com.mustafaiev.tymur.courseservice.service.CourseService;
+import com.mustafaiev.tymur.courseservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -12,15 +16,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/courses")
 public class CourseController {
 
     private final CourseService courseService;
+    private final UserService userService;
 
-    public CourseController(CourseService courseService) {
+
+    public CourseController(CourseService courseService, UserService userService) {
         this.courseService = courseService;
+        this.userService = userService;
     }
 
     @Operation(summary = "Get all courses", description = "Retrieve a list of all courses")
@@ -50,9 +59,14 @@ public class CourseController {
             @ApiResponse(responseCode = "201", description = "Successfully created the course"),
             @ApiResponse(responseCode = "400", description = "Invalid input data")
     })
+    // Эндпоинт для создания курса с категориями и пользователями
     @PostMapping
-    public ResponseEntity<Course> createCourse(@RequestBody @Valid Course course) {
-        return new ResponseEntity<>(courseService.createCourse(course), HttpStatus.CREATED);
+    public ResponseEntity<Course> createCourseWithCategoriesAndUsers(
+            @RequestBody CourseRequestDto courseRequest) {
+        // Вызываем сервис для создания курса с категориями и пользователями
+        Course createdCourse = courseService.createCourseWithCategoriesAndUsers(courseRequest);
+
+        return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update an existing course", description = "Update the details of an existing course")

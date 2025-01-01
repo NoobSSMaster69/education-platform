@@ -1,23 +1,30 @@
 package com.mustafaiev.tymur.courseservice.service;
 
+import com.mustafaiev.tymur.courseservice.DTO.CourseRequestDto;
+import com.mustafaiev.tymur.courseservice.entity.Category;
 import com.mustafaiev.tymur.courseservice.entity.Course;
+import com.mustafaiev.tymur.courseservice.entity.User;
 import com.mustafaiev.tymur.courseservice.repository.CategoryRepository;
 import com.mustafaiev.tymur.courseservice.repository.CourseRepository;
+import com.mustafaiev.tymur.courseservice.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
 
     private final CourseRepository courseRepository;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
-    public CourseService(CourseRepository courseRepository, CategoryRepository categoryRepository) {
+    public CourseService(CourseRepository courseRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
         this.courseRepository = courseRepository;
         this.categoryRepository = categoryRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Course> getAllCourses() {
@@ -49,6 +56,36 @@ public class CourseService {
 
     public void deleteCourse(Long id) {
         courseRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Course createCourseWithCategoriesAndUsers(CourseRequestDto courseRequest) {
+        // Создаем объект Course и заполняем его данными из запроса
+        Course course = new Course();
+        course.setName(courseRequest.getName());
+        course.setDescription(courseRequest.getDescription());
+        course.setDuration(courseRequest.getDuration());
+        course.setDiploma(courseRequest.getDiploma());
+        course.setIntern(courseRequest.getIntern());
+        course.setStartDate(courseRequest.getStartDate());
+
+        // Преобразуем категории в объекты
+        Set<Category> categories = courseRequest.getCategories().stream()
+                .map(categoryName -> categoryRepository.findByName(categoryName)
+                        .orElseThrow(() -> new RuntimeException("Category not found: " + categoryName)))
+                .collect(Collectors.toSet());
+        course.setCategories(categories);
+
+        // Находим пользователей по именам из CourseRequestDto
+        Set<User> users = userRepository.findByNameIn(new ArrayList<>(courseRequest.getUserNames()));
+        course.setUsers(users);
+
+        // Проверка на отсутствие пользователей
+        if (users.isEmpty()) {
+            throw new RuntimeException("No users found for the provided names.");
+        }
+        // Сохраняем курс в базе данных
+        return courseRepository.save(course);
     }
 }
 
