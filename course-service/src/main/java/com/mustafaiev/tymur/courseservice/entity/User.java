@@ -2,12 +2,13 @@ package com.mustafaiev.tymur.courseservice.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import org.apache.commons.lang.math.RandomUtils;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 @Entity
+@Table(name = "user_app")
 public class User {
     @Id
     private Long id; // Идентификатор задаётся вручную
@@ -23,7 +24,8 @@ public class User {
     public User() {}
 
     public User(String name) {
-        this.id = RandomUtils.nextLong();
+        Random random = new Random();
+        this.id = Math.abs(1 + random.nextLong(100000 - 1));
         this.name = name;
     }
 

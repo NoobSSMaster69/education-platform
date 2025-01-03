@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   course-service:
-    image: tymurmustafaiev/course-service:latest  # Указан образ из Docker Hub
+    image: tymurmustafaiev/course-service:latest
     container_name: course-service
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://course-db:5432/course_service_db
@@ -10,11 +10,12 @@ services:
       - SPRING_DATASOURCE_PASSWORD=course_password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
-      - "8080:8080"
+      - "8081:8081"
     depends_on:
       - course-db
     networks:
       - course-network
+    entrypoint: ["sh", "-c", "until nc -z course-db 5432; do echo waiting for database; sleep 2; done; java -jar /app/course-service.jar"]
 
   course-db:
     image: postgres:15

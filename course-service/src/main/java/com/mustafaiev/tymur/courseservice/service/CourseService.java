@@ -69,23 +69,64 @@ public class CourseService {
         course.setIntern(courseRequest.getIntern());
         course.setStartDate(courseRequest.getStartDate());
 
-        // Преобразуем категории в объекты
+        // Обработка категорий
         Set<Category> categories = courseRequest.getCategories().stream()
                 .map(categoryName -> categoryRepository.findByName(categoryName)
-                        .orElseThrow(() -> new RuntimeException("Category not found: " + categoryName)))
+                        .orElseGet(() -> {
+                            // Создаем категорию, если не существует
+                            Category newCategory = new Category();
+                            newCategory.setName(categoryName);
+                            return categoryRepository.save(newCategory);
+                        }))
                 .collect(Collectors.toSet());
         course.setCategories(categories);
 
-        // Находим пользователей по именам из CourseRequestDto
-        Set<User> users = userRepository.findByNameIn(new ArrayList<>(courseRequest.getUserNames()));
+        // Обработка пользователей
+        Set<User> users = courseRequest.getUserNames().stream()
+                .map(userName -> userRepository.findByName(userName)
+                        .orElseGet(() -> {
+                            // Создаем пользователя, если не существует
+                            User newUser = new User(userName);
+                            // Здесь можно задать дополнительные поля, если они необходимы
+                            return userRepository.save(newUser);
+                        }))
+                .collect(Collectors.toSet());
         course.setUsers(users);
 
-        // Проверка на отсутствие пользователей
-        if (users.isEmpty()) {
-            throw new RuntimeException("No users found for the provided names.");
-        }
         // Сохраняем курс в базе данных
         return courseRepository.save(course);
     }
+
+
+
+//    @Transactional
+//    public Course createCourseWithCategoriesAndUsers(CourseRequestDto courseRequest) {
+//        // Создаем объект Course и заполняем его данными из запроса
+//        Course course = new Course();
+//        course.setName(courseRequest.getName());
+//        course.setDescription(courseRequest.getDescription());
+//        course.setDuration(courseRequest.getDuration());
+//        course.setDiploma(courseRequest.getDiploma());
+//        course.setIntern(courseRequest.getIntern());
+//        course.setStartDate(courseRequest.getStartDate());
+//
+//        // Преобразуем категории в объекты
+//        Set<Category> categories = courseRequest.getCategories().stream()
+//                .map(categoryName -> categoryRepository.findByName(categoryName)
+//                        .orElseThrow(() -> new RuntimeException("Category not found: " + categoryName)))
+//                .collect(Collectors.toSet());
+//        course.setCategories(categories);
+//
+//        // Находим пользователей по именам из CourseRequestDto
+//        Set<User> users = userRepository.findByNameIn(new ArrayList<>(courseRequest.getUserNames()));
+//        course.setUsers(users);
+//
+//        // Проверка на отсутствие пользователей
+//        if (users.isEmpty()) {
+//            throw new RuntimeException("No users found for the provided names.");
+//        }
+//        // Сохраняем курс в базе данных
+//        return courseRepository.save(course);
+//    }
 }
 
