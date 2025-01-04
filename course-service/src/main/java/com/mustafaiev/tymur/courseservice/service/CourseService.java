@@ -68,6 +68,9 @@ public class CourseService {
         course.setDiploma(courseRequest.getDiploma());
         course.setIntern(courseRequest.getIntern());
         course.setStartDate(courseRequest.getStartDate());
+        course.setDifficulty(Course.Difficulty.valueOf(courseRequest.getDifficulty())); // Если это Enum
+        course.setDurationUnit(Course.DurationUnit.valueOf(courseRequest.getDurationUnit())); // Если это Enum
+
 
         // Обработка категорий
         Set<Category> categories = courseRequest.getCategories().stream()

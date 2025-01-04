@@ -8,11 +8,29 @@ public class CourseRequestDto {
     private String name;
     private String description;
     private Integer duration;
+    private String difficulty; // Новое поле для сложности
+    private String durationUnit; // Новое поле для единицы измерения времени
     private Boolean diploma;
     private Boolean intern;
     private LocalDate startDate;
     private Set<String> userNames;
     private Set<String> categories;
+
+    public String getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public String getDurationUnit() {
+        return durationUnit;
+    }
+
+    public void setDurationUnit(String durationUnit) {
+        this.durationUnit = durationUnit;
+    }
 
     // Геттеры и сеттеры
     public String getName() {

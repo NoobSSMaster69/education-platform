@@ -1,5 +1,6 @@
 package com.mustafaiev.tymur.courseservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -18,6 +19,7 @@ public class User {
     private String name; // Имя школы
 
     @ManyToMany(mappedBy = "users")
+    @JsonIgnore
     private Set<Course> courses = new HashSet<>();
 
     // Конструкторы, геттеры, сеттеры
@@ -25,7 +27,7 @@ public class User {
 
     public User(String name) {
         Random random = new Random();
-        this.id = Math.abs(1 + random.nextLong(100000 - 1));
+        this.id = 1 + random.nextLong(100000 - 1);
         this.name = name;
     }
 

@@ -1,5 +1,6 @@
 package com.mustafaiev.tymur.courseservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ public class Category {
     private String name;
 
     @ManyToMany(mappedBy = "categories")
+    @JsonIgnore
     private Set<Course> courses = new HashSet<>();
 
     // Конструкторы, геттеры и сеттеры
