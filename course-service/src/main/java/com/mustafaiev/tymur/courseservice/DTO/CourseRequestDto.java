@@ -1,5 +1,6 @@
 package com.mustafaiev.tymur.courseservice.DTO;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -15,6 +16,15 @@ public class CourseRequestDto {
     private LocalDate startDate;
     private Set<String> userNames;
     private Set<String> categories;
+    private BigDecimal price;
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
     public String getDifficulty() {
         return difficulty;

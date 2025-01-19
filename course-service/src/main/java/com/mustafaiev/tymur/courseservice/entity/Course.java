@@ -50,7 +50,7 @@ public class Course {
 
     private LocalDate startDate;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "course_category",
             joinColumns = @JoinColumn(name = "course_id"),
@@ -58,7 +58,7 @@ public class Course {
     )
     private Set<Category> categories = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "course_user",
             joinColumns = @JoinColumn(name = "course_id"),

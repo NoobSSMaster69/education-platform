@@ -70,6 +70,7 @@ public class CourseService {
         course.setStartDate(courseRequest.getStartDate());
         course.setDifficulty(Course.Difficulty.valueOf(courseRequest.getDifficulty())); // Если это Enum
         course.setDurationUnit(Course.DurationUnit.valueOf(courseRequest.getDurationUnit())); // Если это Enum
+        course.setPrice(courseRequest.getPrice());  // Устанавливаем цену курса из DTO
 
 
         // Обработка категорий
